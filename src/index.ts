@@ -11,7 +11,16 @@ class Main {
     private paramsParser: ParamsParser,
   ) { }
 
-  public printTable() {
+  public writeMarkdownTable() {
+    const mdTable = this.buildTable();
+
+    const exportPath = 'exported-params-table.md';
+    const resolvedExportPath = resolve(exportPath);
+    const fileHeader = '# Domination Params\n\n';
+    writeFileSync(resolvedExportPath, fileHeader + mdTable, { encoding: 'utf8' });
+  }
+
+  private buildTable(): string {
     const params = this.extractParams();
 
     const headers = [
@@ -27,7 +36,7 @@ class Main {
       values.map(({ name, value }) => `${name}: \`${value}\``).join(' <br /> '),
     ]);
 
-    const mdTable = markdownTable(
+    return markdownTable(
       [headers, ...rows],
       {
         alignDelimiters: true,
@@ -36,10 +45,6 @@ class Main {
         padding: true
       },
     );
-    const exportPath = 'exported-params-table.md';
-    const resolvedExportPath = resolve(exportPath);
-    const fileHeader = '# Domination Params\n\n';
-    writeFileSync(resolvedExportPath, fileHeader + mdTable, { encoding: 'utf8' });
   }
 
   private extractParams(): Param[] {
@@ -52,4 +57,4 @@ const main = new Main(
   new StringTableParser('domination/co30_Domination.Altis/stringtable.xml'),
   new ParamsParser('domination/co30_Domination.Altis/description.ext'),
 );
-main.printTable();
+main.writeMarkdownTable();
