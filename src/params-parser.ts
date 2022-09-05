@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
-import { throwIfNaN } from './helpers';
-import type { Param, ParamValue } from './models';
+import { throwIfNaN } from './helpers.js';
+import type { Param, ParamValue } from './models.js';
 
 type ParsedParam = {
   id: string;

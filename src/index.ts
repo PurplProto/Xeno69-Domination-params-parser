@@ -1,7 +1,7 @@
 import { markdownTable } from 'markdown-table';
-import type { Param } from './models';
-import { ParamsParser } from './params-parser';
-import { StringTableParser } from './string-table-parser';
+import type { Param } from './models.js';
+import { ParamsParser } from './params-parser.js';
+import { StringTableParser } from './string-table-parser.js';
 
 class Main {
   constructor(
