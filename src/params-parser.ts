@@ -3,12 +3,24 @@ import { resolve } from 'path';
 import { throwIfNaN } from './helpers';
 
 type ParsedParam = {
-  id?: string;
-  title?: string;
-  values?: number[];
-  default?: number;
-  valueText?: string[];
-  disabled?: boolean;
+  id: string;
+  title: string;
+  values: number[];
+  defaultValue: number;
+  valueText: string[];
+  disabled: boolean;
+};
+
+type ParamValue = {
+  name: string;
+  value: number;
+};
+
+type Param = {
+  id: string;
+  title: string;
+  values: ParamValue[];
+  defaultValue: number;
 };
 
 export class ParamsParser {
@@ -26,14 +38,15 @@ export class ParamsParser {
   }
 
   /**
-   * parse
+   * Parse params from the file path provided at construction
+   * @returns {Param[]} Parsed params with hidden params removed
    */
-  public parse(): ParsedParam[] {
+  public parse(): Param[] {
     let paramCount = 0;
     let isIfBlock = false;
     let processIfBlock = false;
 
-    return this.fileData.reduce<ParsedParam[]>(
+    const parsedParams = this.fileData.reduce<Partial<ParsedParam[]>>(
       (acc, next) => {
         if (next === '') {
           return acc;
@@ -55,10 +68,10 @@ export class ParamsParser {
           }
         }
 
-        const param: ParsedParam = acc[paramCount] ?? {};
+        const param: Partial<ParsedParam> = acc[paramCount] ?? {};
 
         if (!acc[paramCount]) {
-          acc[paramCount] = param;
+          acc[paramCount] = param as ParsedParam;
         }
 
         if (next === '\t};') {
@@ -70,14 +83,26 @@ export class ParamsParser {
         } else if (next.startsWith('\t\tvalues[]')) {
           param.values = this.parseValues(next, param);
         } else if (next.startsWith('\t\tdefault')) {
-          param.default = this.parseDefault(next, param);
+          param.defaultValue = this.parseDefault(next, param);
         } else if (next.startsWith('\t\ttexts[]')) {
           param.valueText = this.parseTexts(next, param);
         }
+
         return acc;
       },
       [],
     );
+
+    return (parsedParams.filter(p => p && !p.disabled) as ParsedParam[])
+      .map<Param>(({ defaultValue, id, title, valueText, values }: ParsedParam) => ({
+        id,
+        title,
+        defaultValue,
+        values: values.map<ParamValue>((value, i) => ({
+          name: valueText[i] ?? '<Unknown Value>',
+          value
+        })),
+      }));
   }
 
   private parseClass(value: string): string {
@@ -93,7 +118,7 @@ export class ParamsParser {
     return realValue;
   }
 
-  private parseValues(value: string, param: Readonly<ParsedParam>): number[] {
+  private parseValues(value: string, param: Readonly<Partial<ParsedParam>>): number[] {
     const values = value.replace(/\t\tvalues\[\] = \{(.*)\}\;/, '$1')
       .split(',')
       .map(v => parseInt(v, 10));
@@ -101,13 +126,13 @@ export class ParamsParser {
     return values;
   }
 
-  private parseDefault(value: string, param: ParsedParam): number {
+  private parseDefault(value: string, param: Partial<ParsedParam>): number {
     const defaultValue = parseInt(value.replace(/\t\tdefault = (.*)\;/, '$1'), 10);
     throwIfNaN([defaultValue], `The "default" for "${param.id}" could not be parsed as a number`);
     return defaultValue;
   }
 
-  private parseTexts(value: string, param: ParsedParam): string[] {
+  private parseTexts(value: string, param: Partial<ParsedParam>): string[] {
     const textsGroup = value.replace(/\t\ttexts\[\] = \{(.*)\}\;/, '$1').replaceAll('"', '');
     if (textsGroup === '') {
       param.disabled = true;
