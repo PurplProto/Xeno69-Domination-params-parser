@@ -1,4 +1,6 @@
+import { writeFileSync } from 'fs';
 import { markdownTable } from 'markdown-table';
+import { resolve } from 'path';
 import type { Param } from './models.js';
 import { ParamsParser } from './params-parser.js';
 import { StringTableParser } from './string-table-parser.js';
@@ -22,19 +24,22 @@ class Main {
       id,
       title,
       `\`${defaultValue}\``,
-      values.map(({ name, value }) => `${name}: \`${value}\``).join('\n'),
+      values.map(({ name, value }) => `${name}: \`${value}\``).join(' <br /> '),
     ]);
 
     const mdTable = markdownTable(
       [headers, ...rows],
       {
         alignDelimiters: true,
-        delimiterEnd: true,
-        delimiterStart: true,
+        delimiterEnd: false,
+        delimiterStart: false,
         padding: true
       },
     );
-    console.log(mdTable);
+    const exportPath = 'exported-params-table.md';
+    const resolvedExportPath = resolve(exportPath);
+    const fileHeader = '# Domination Params\n\n';
+    writeFileSync(resolvedExportPath, fileHeader + mdTable, { encoding: 'utf8' });
   }
 
   private extractParams(): Param[] {
