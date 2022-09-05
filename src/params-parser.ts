@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import { throwIfNaN } from './helpers';
+import type { Param, ParamValue } from './models';
 
 type ParsedParam = {
   id: string;
@@ -9,18 +10,6 @@ type ParsedParam = {
   defaultValue: number;
   valueText: string[];
   disabled: boolean;
-};
-
-type ParamValue = {
-  name: string;
-  value: number;
-};
-
-type Param = {
-  id: string;
-  title: string;
-  values: ParamValue[];
-  defaultValue: number;
 };
 
 export class ParamsParser {
