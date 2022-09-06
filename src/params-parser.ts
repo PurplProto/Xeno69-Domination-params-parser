@@ -131,18 +131,11 @@ export class ParamsParser {
       param.disabled = true;
       return [];
     }
-    const texts = textsGroup.split(',')
-      .map(s => {
-        if (s.startsWith('$')) {
-          const stringVar = s.replace('$', '');
-          const realValue = this.stringTable.get(stringVar);
-          if (!realValue) {
-            throw new Error(`Couldn't find "${stringVar}" in the stringtable!`);
-          }
-          return realValue;
-        }
-        return s;
-      });
+
+    const texts = textsGroup.split(',').map(
+      (s) => this.stringTable.get(s.replace('$', '')) ?? s,
+    );
+
     param.disabled = false;
     return texts;
   }
