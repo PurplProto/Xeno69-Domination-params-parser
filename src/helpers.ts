@@ -3,3 +3,7 @@ export function throwIfNaN(arr: number[], msg: string) {
     throw new Error(msg);
   }
 }
+
+export function removeWhiteSpaceAndQuotes(s: string): string {
+  return s.replaceAll('"', '').replaceAll(' ', '');
+}

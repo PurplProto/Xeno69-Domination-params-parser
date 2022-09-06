@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
-import { throwIfNaN } from './helpers.js';
+import { removeWhiteSpaceAndQuotes, throwIfNaN } from './helpers.js';
 import type { Param, ParamValue } from './models.js';
 
 type ParsedParam = {
@@ -95,11 +95,11 @@ export class ParamsParser {
   }
 
   private parseClass(value: string): string {
-    return value.replace(/\tclass (.*) \{/, '$1');
+    return removeWhiteSpaceAndQuotes(value.replace(/\tclass (.*) \{/, '$1'));
   }
 
   private parseTitle(value: string): string {
-    const stringVar = value.replace(/\t\ttitle = \"\$(.*)\"\;/, '$1');
+    const stringVar = removeWhiteSpaceAndQuotes(value.replace(/\t\ttitle = \"\$(.*)\"\;/, '$1'));
     const realValue = this.stringTable.get(stringVar);
     if (!realValue) {
       throw new Error(`Couldn't find "${stringVar}" in the stringtable!`);
@@ -108,7 +108,7 @@ export class ParamsParser {
   }
 
   private parseValues(value: string, param: Readonly<Partial<ParsedParam>>): number[] {
-    const values = value.replace(/\t\tvalues\[\] = \{(.*)\}\;/, '$1')
+    const values = removeWhiteSpaceAndQuotes(value.replace(/\t\tvalues\[\] = \{(.*)\}\;/, '$1'))
       .split(',')
       .map(v => parseInt(v, 10));
     throwIfNaN(values, `Some "values" for "${param.id}" could not be parsed as a number`);
@@ -116,13 +116,17 @@ export class ParamsParser {
   }
 
   private parseDefault(value: string, param: Partial<ParsedParam>): number {
-    const defaultValue = parseInt(value.replace(/\t\tdefault = (.*)\;/, '$1'), 10);
+    const defaultValue = parseInt(
+      removeWhiteSpaceAndQuotes(value.replace(/\t\tdefault = (.*)\;/, '$1')),
+      10,
+    );
     throwIfNaN([defaultValue], `The "default" for "${param.id}" could not be parsed as a number`);
     return defaultValue;
   }
 
   private parseTexts(value: string, param: Partial<ParsedParam>): string[] {
-    const textsGroup = value.replace(/\t\ttexts\[\] = \{(.*)\}\;/, '$1').replaceAll('"', '');
+    const textsGroup = removeWhiteSpaceAndQuotes(value.replace(/\t\ttexts\[\] = \{(.*)\}\;/, '$1'));
+
     if (textsGroup === '') {
       param.disabled = true;
       return [];
