@@ -4,12 +4,17 @@
   "description": "Node.js project for parsing Xeno69's Domination mission parameters",
   "type": "module",
   "main": "dist/index.js",
+  "private": "true",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "rm -rf dist/",
-    "build": "npm run clean && tsc -p tsconfig.json"
+    "clean": "npx rimraf dist/",
+    "build": "tsc -p tsconfig.json",
+    "install-packages": "npm ci",
+    "execute-app": "node dist/index.js",
+    "start": "npm run install-packages && npm run clean && npm run build && npm run execute-app"
   },
-  "keywords": [],
+  "keywords": [
+    "xeno69 domination params parser"
+  ],
   "author": "",
   "license": "MIT",
   "devDependencies": {
