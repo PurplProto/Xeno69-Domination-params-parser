@@ -27,13 +27,13 @@ class Main {
       'Param',
       'Title',
       'Default',
-      'Description: Value'
+      'Value: Description'
     ];
     const rows = params.map(({ id, title, defaultValue, values }) => [
       id,
       title,
       `\`${defaultValue}\``,
-      values.map(({ name, value }) => `${name}: \`${value}\``).join(' <br /> '),
+      values.map(({ name, value }) => `\`${value}\`: ${name}`).join(' <br /> '),
     ]);
 
     return markdownTable(
