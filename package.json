@@ -6,11 +6,11 @@
   "main": "dist/index.js",
   "private": "true",
   "scripts": {
+    "install-deps": "git submodule update --init --remote --recommend-shallow && npm ci",
     "clean": "npx rimraf dist/",
     "build": "tsc -p tsconfig.json",
-    "install-packages": "npm ci",
-    "execute-app": "node dist/index.js",
-    "start": "npm run install-packages && npm run clean && npm run build && npm run execute-app"
+    "start:app": "node dist/index.js",
+    "start": "npm run install-deps && npm run clean && npm run build && npm run start:app"
   },
   "keywords": [
     "xeno69 domination params parser"
