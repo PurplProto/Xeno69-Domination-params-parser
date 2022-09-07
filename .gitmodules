@@ -1,0 +1,4 @@
+[submodule "domination"]
+	path = domination
+	url = https://github.com/Xeno69/Domination.git
+	branch = master

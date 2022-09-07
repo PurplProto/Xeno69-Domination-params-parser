@@ -49,7 +49,7 @@ class Main {
 }
 
 const main = new Main(
-  new StringTableParser('uncompiled/co40_domination_4_64_blufor.altis/stringtable.xml'),
-  new ParamsParser('uncompiled/co40_domination_4_64_blufor.altis/description.ext'),
+  new StringTableParser('domination/co30_Domination.Altis/stringtable.xml'),
+  new ParamsParser('domination/co30_Domination.Altis/description.ext'),
 );
 main.printTable();
