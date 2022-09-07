@@ -47,7 +47,7 @@ export class ParamsParser {
           }
 
           isIfBlock = true;
-          if (next === '#ifdef __ALTIS__') {
+          if (next === '#ifdef __ALTIS__' || next === '#else') {
             processIfBlock = true;
             return acc;
           }
