@@ -103,4 +103,6 @@ dist
 # TernJS port file
 .tern-port
 
+# Ignore exported files
 exported-params-table.md
+Wiki_cfgparams.txt
